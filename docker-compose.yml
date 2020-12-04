@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    command: "php artisan serve --host 0.0.0.0"
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: app_development
+    volumes:
+      - db-volume:/var/lib/mysql
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+
+volumes:
+  db-volume:
